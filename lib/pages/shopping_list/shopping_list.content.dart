@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_helper/modules/shopping_list/shopping_list.cubit.dart';
+import 'package:shopping_helper/modules/shopping_list/shopping_list.state.dart';
 
 import 'components/shopping_list_item.component.dart';
 
 class ShoppingListContent extends StatelessWidget {
-  const ShoppingListContent({super.key});
+  const ShoppingListContent({super.key, required this.state});
+
+  final ShoppingListState state;
 
   @override
   Widget build(BuildContext context) {
 
     final cubit = context.read<ShoppingListCubit>();
-    final state = cubit.state;
 
     return Scaffold(
       body: ListView(

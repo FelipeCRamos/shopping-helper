@@ -21,7 +21,7 @@ class ShoppingListView extends StatelessWidget {
         if (state.isLoading) {
           body = const ListContentLoading();
         } else if (state.items?.isNotEmpty ?? false) {
-          body = const ShoppingListContent();
+          body = ShoppingListContent(state: state);
         } else {
           body = const ListContentEmpty(
             errorMessage: 'Nenhuma lista criada até o momento.',
