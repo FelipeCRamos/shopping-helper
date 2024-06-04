@@ -7,11 +7,13 @@ class ItemTile extends StatelessWidget {
     required this.item,
     this.onTap,
     this.onLongTap,
+    required this.onRemove,
   });
 
   final ItemListItem item;
   final void Function()? onTap;
   final void Function()? onLongTap;
+  final void Function() onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +24,58 @@ class ItemTile extends StatelessWidget {
         onChanged: (_) => onTap?.call(),
         visualDensity: VisualDensity.compact,
       ),
-      trailing: item.calculatedPrice != null
-          ? Text(
-              'R\$ ${item.calculatedPrice?.toStringAsFixed(2)}',
-              style: Theme.of(context).textTheme.titleSmall,
-            )
-          : null,
-      title: Text(item.title),
+      trailing: _TrailingSection(
+        key: Key('_TrailingSection-${item.id}'),
+        calculatedPrice: item.calculatedPrice,
+        onRemove: onRemove,
+      ),
+      title: Text(item.title, maxLines: 2),
       subtitle: Text(item.quantityWithUnit),
       onTap: onTap,
       onLongPress: onLongTap,
+    );
+  }
+}
+
+class _TrailingSection extends StatelessWidget {
+  const _TrailingSection({
+    super.key,
+    this.calculatedPrice,
+    required this.onRemove,
+  });
+
+  final double? calculatedPrice;
+  final void Function() onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (calculatedPrice != null)
+          Text(
+            'R\$ ${calculatedPrice?.toStringAsFixed(2)}',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+        PopupMenuButton<Function()>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (anonyFunction) => anonyFunction.call(),
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+              value: onRemove,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.delete),
+                  SizedBox(width: 12),
+                  Text('Excluir item'),
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 }

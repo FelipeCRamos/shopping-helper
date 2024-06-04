@@ -30,7 +30,36 @@ class ItemListContent extends StatelessWidget {
                   item: item,
                   onTap: () => cubit.togglePickedUp(item.id),
                   onLongTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (ctx) {
+                        return SizedBox(
+                          width: MediaQuery.of(ctx).size.width,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+                            ),
+                            child: ItemAddPriceView(
+                              onSubmitted: (double price, bool checkboxTapped) {
+                                if (price >= 0) {
+                                  cubit.addCurrentPrice(
+                                    item.id,
+                                    price,
+                                    isAbsolute: checkboxTapped,
+                                  );
+                                  return true;
+                                }
+                                return false;
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                    /*
                     Scaffold.of(context).showBottomSheet(
+                      showDragHandle: true,
                       (ctx) => ItemAddPriceView(
                         onSubmitted: (double price, bool checkboxTapped) {
                           if (price >= 0) {
@@ -46,6 +75,11 @@ class ItemListContent extends StatelessWidget {
                       ),
                       backgroundColor: Theme.of(context).colorScheme.onPrimary,
                     );
+                    */
+                  },
+                  onRemove: () {
+                    debugPrint('Removing item "${item.title}" from list...');
+                    cubit.removeFromList(item.id);
                   },
                 ),
                 const Divider(thickness: 0.3, height: 0),

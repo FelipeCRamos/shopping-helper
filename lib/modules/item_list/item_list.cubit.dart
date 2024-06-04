@@ -67,8 +67,11 @@ class ItemListCubit extends Cubit<ItemListState> {
     );
   }
 
-  Future<void> addCurrentPrice(String id, double price,
-      {bool isAbsolute = false}) async {
+  Future<void> addCurrentPrice(
+    String id,
+    double price, {
+    bool isAbsolute = false,
+  }) async {
     emit(
       ItemListState(
         isLoading: true,
