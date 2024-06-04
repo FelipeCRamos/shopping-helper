@@ -57,25 +57,6 @@ class ItemListContent extends StatelessWidget {
                         );
                       },
                     );
-                    /*
-                    Scaffold.of(context).showBottomSheet(
-                      showDragHandle: true,
-                      (ctx) => ItemAddPriceView(
-                        onSubmitted: (double price, bool checkboxTapped) {
-                          if (price >= 0) {
-                            cubit.addCurrentPrice(
-                              item.id,
-                              price,
-                              isAbsolute: checkboxTapped,
-                            );
-                            return true;
-                          }
-                          return false;
-                        },
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                    );
-                    */
                   },
                   onRemove: () {
                     debugPrint('Removing item "${item.title}" from list...');

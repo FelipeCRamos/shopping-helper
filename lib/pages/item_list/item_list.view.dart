@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_helper/modules/item_list/item_list.cubit.dart';
 import 'package:shopping_helper/modules/item_list/item_list.state.dart';
+import 'package:shopping_helper/pages/item_list/item_list_summup.content.dart';
 import 'package:shopping_helper/pages/shared/components/list_content_empty.component.dart';
 import 'package:shopping_helper/pages/shared/components/list_content_loading.component.dart';
 
@@ -24,6 +25,8 @@ class ItemListView extends StatelessWidget {
           body = const ListContentEmpty();
         }
 
+        final double? bagSum = state.itemsSum;
+
         return Scaffold(
           appBar: AppBar(
             title: Text(
@@ -35,6 +38,11 @@ class ItemListView extends StatelessWidget {
             ),
           ),
           body: body,
+          bottomSheet: ItemListSummupContent(
+            key: const Key('item-list-summup'),
+            shouldAppear: bagSum != null,
+            calculatedBagValue: bagSum,
+          ),
         );
       },
     );

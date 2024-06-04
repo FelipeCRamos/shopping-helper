@@ -9,6 +9,28 @@ class ItemListState {
   final String? title;
   final List<ItemListItem>? items;
 
+  // aggregator
+  double? get itemsSum {
+    if (items?.isNotEmpty ?? false) {
+      double sum = items!.fold(
+        0.00,
+        (currentSum, nextItem) {
+          if (nextItem.pickedUp && nextItem.currentUnitPrice != null) {
+            if (nextItem.fixedPrice ?? false) {
+              currentSum += nextItem.currentUnitPrice!;
+            } else {
+              currentSum += nextItem.currentUnitPrice! * nextItem.quantity;
+            }
+          }
+          return currentSum;
+        },
+      );
+      return sum;
+    }
+
+    return null;
+  }
+
   const ItemListState({
     this.isLoading = false,
     this.editModeEnabled = false,
