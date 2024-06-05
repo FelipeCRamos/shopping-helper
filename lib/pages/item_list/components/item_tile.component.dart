@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_helper/modules/item_list/models/item_list_item.model.dart';
+import 'package:shopping_helper/core/extensions/double.extension.dart';
 
 class ItemTile extends StatelessWidget {
   const ItemTile({
@@ -18,6 +19,7 @@ class ItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
       key: Key('list-tile-${item.id}'),
       leading: Checkbox(
         value: item.pickedUp,
@@ -29,8 +31,12 @@ class ItemTile extends StatelessWidget {
         calculatedPrice: item.calculatedPrice,
         onRemove: onRemove,
       ),
-      title: Text(item.title, maxLines: 2),
-      subtitle: Text(item.quantityWithUnit),
+      title: Text(
+        item.title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(item.prettyQuantityWithUnit),
       onTap: onTap,
       onLongPress: onLongTap,
     );
@@ -54,7 +60,7 @@ class _TrailingSection extends StatelessWidget {
       children: [
         if (calculatedPrice != null)
           Text(
-            'R\$ ${calculatedPrice?.toStringAsFixed(2)}',
+            calculatedPrice?.toMoneyString() ?? '',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         PopupMenuButton<Function()>(

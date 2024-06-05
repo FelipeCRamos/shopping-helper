@@ -1,9 +1,10 @@
-import 'package:uuid/v4.dart';
+import 'package:shopping_helper/core/utils/codable.dart';
+// import 'package:uuid/v4.dart';
 
 import 'unit_type.model.dart';
 
-class ItemListItem {
-  final String id;
+class ItemListItem with Codable<ItemListItem> {
+  // final String id;
   final String title;
   final double quantity;
   final UnitType unitType;
@@ -12,8 +13,12 @@ class ItemListItem {
 
   final double? currentUnitPrice;
   final bool? fixedPrice;
+
+  // later down the road: images
+
+  // getters for showing appropriate values
   double? get calculatedPrice {
-    if(fixedPrice ?? false) {
+    if (fixedPrice ?? false) {
       return currentUnitPrice;
     } else if (currentUnitPrice != null) {
       return currentUnitPrice! * quantity;
@@ -21,19 +26,20 @@ class ItemListItem {
     return null;
   }
 
-  // later down the road: images
+  String get prettyPrint => "Item{title: '$title', quantity: '$quantity', "
+      "unitType: '${unitType.name}', pickedUp: '$pickedUp', "
+      "attentionPoints: '$attentionPoints'}";
 
-  // getters for showing appropriate values
-  String get quantityWithUnit {
-    if (!unitType.isDouble) {
-      return '${quantity.round()} ${unitType.asString}';
-    } else {
-      return '${quantity.toStringAsFixed(2)}${unitType.asString}';
-    }
-  }
+  String get quantityAsString => unitType.isDouble
+      ? quantity.toStringAsFixed(2)
+      : quantity.round().toString();
+
+  String get prettyQuantityWithUnit => unitType.isDouble
+      ? '$quantityAsString${unitType.asString}'
+      : '$quantityAsString ${unitType.asString}';
 
   ItemListItem({
-    String? id,
+    // String? id,
     required this.title,
     this.quantity = 1,
     this.unitType = UnitType.unit,
@@ -41,10 +47,21 @@ class ItemListItem {
     this.pickedUp = false,
     this.currentUnitPrice,
     this.fixedPrice,
-  }) : id = id ?? const UuidV4().generate();
+  }) /*: id = id ?? const UuidV4().generate()*/;
+
+  factory ItemListItem.fromJson(Map<String, dynamic> json) => ItemListItem(
+        // id: json.containsKey('id') ? json['id'] : null,
+        title: json.containsKey('title') ? json['title'] : null,
+        quantity: json.containsKey('quantity') ? json['quantity'] : null,
+        unitType: UnitType.fromName(json['unitType']),
+        attentionPoints: json.containsKey('attentionPoints') ? json['attentionPoints'] : null,
+        pickedUp: json.containsKey('pickedUp') ? json['pickedUp'] : null,
+        currentUnitPrice: json.containsKey('currentUnitPrice') ? json['currentUnitPrice'] : null,
+        fixedPrice: json.containsKey('fixedPrice') ? json['fixedPrice'] : null,
+      );
 
   ItemListItem copyWith({
-    String? id,
+    // String? id,
     String? title,
     double? quantity,
     UnitType? unitType,
@@ -54,7 +71,7 @@ class ItemListItem {
     bool? fixedPrice,
   }) =>
       ItemListItem(
-        id: id ?? this.id,
+        // id: id ?? this.id,
         title: title ?? this.title,
         quantity: quantity ?? this.quantity,
         unitType: unitType ?? this.unitType,
@@ -63,4 +80,18 @@ class ItemListItem {
         currentUnitPrice: currentUnitPrice ?? this.currentUnitPrice,
         fixedPrice: fixedPrice ?? this.fixedPrice,
       );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      // 'id': id,
+      'title': title,
+      'quantity': quantity,
+      'unitType': unitType.toJson,
+      'attentionPoints': attentionPoints,
+      'pickedUp': pickedUp,
+      'currentUnitPrice': currentUnitPrice,
+      'fixedPrice': fixedPrice,
+    };
+  }
 }

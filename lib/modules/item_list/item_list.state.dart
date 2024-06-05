@@ -15,12 +15,8 @@ class ItemListState {
       double sum = items!.fold(
         0.00,
         (currentSum, nextItem) {
-          if (nextItem.pickedUp && nextItem.currentUnitPrice != null) {
-            if (nextItem.fixedPrice ?? false) {
-              currentSum += nextItem.currentUnitPrice!;
-            } else {
-              currentSum += nextItem.currentUnitPrice! * nextItem.quantity;
-            }
+          if (nextItem.pickedUp) {
+            currentSum += nextItem.calculatedPrice ?? 0;
           }
           return currentSum;
         },

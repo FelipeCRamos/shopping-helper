@@ -7,6 +7,11 @@ enum UnitType {
 
   const UnitType(this.asString, {this.isDouble = true});
 
+  String get toJson => name;
+  factory UnitType.fromName(String json) => UnitType.values.firstWhere(
+        (element) => element.toJson == json,
+      );
+
   final String asString;
   final bool isDouble;
 }

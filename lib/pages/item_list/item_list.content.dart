@@ -4,7 +4,7 @@ import 'package:shopping_helper/modules/item_list/item_list.cubit.dart';
 import 'package:shopping_helper/modules/item_list/item_list.state.dart';
 
 import 'components/item_tile.component.dart';
-import 'item_add_price.view.dart';
+import 'item_edit.view.dart';
 
 class ItemListContent extends StatelessWidget {
   const ItemListContent({super.key, required this.state});
@@ -40,18 +40,13 @@ class ItemListContent extends StatelessWidget {
                             padding: EdgeInsets.only(
                               bottom: MediaQuery.of(ctx).viewInsets.bottom,
                             ),
-                            child: ItemAddPriceView(
-                              onSubmitted: (double price, bool checkboxTapped) {
-                                if (price >= 0) {
-                                  cubit.addCurrentPrice(
-                                    item.id,
-                                    price,
-                                    isAbsolute: checkboxTapped,
-                                  );
-                                  return true;
-                                }
-                                return false;
-                              },
+                            child: ItemEditView(
+                              currentItem: item,
+                              onSubmitted: (item) {
+                                cubit.editItem(item.id, (oldItem) => item);
+                                // TODO: return actual result
+                                return true;
+                              }
                             ),
                           ),
                         );

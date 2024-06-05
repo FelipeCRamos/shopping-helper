@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:shopping_helper/core/extensions/double.extension.dart';
 
 class ItemListSummupContent extends StatelessWidget {
   const ItemListSummupContent({
@@ -32,7 +32,7 @@ class ItemListSummupContent extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'R\$ ${NumberFormat().format(calculatedBagValue!)}',
+                  calculatedBagValue?.toMoneyString() ?? '',
                   style: Theme.of(context)
                       .textTheme
                       .headlineSmall
