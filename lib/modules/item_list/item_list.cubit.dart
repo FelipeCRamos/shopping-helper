@@ -30,6 +30,19 @@ class ItemListCubit extends Cubit<ItemListState> {
     emit(ItemListState(isLoading: false, items: items, title: title));
   }
 
+  Future<void> resetListPrices({required String listId}) async {
+    emit(const ItemListState(isLoading: true));
+
+    {
+      for (final item in items!) {
+        final newItem = item.copyWith(currentUnitPrice: 0);
+        editItem(newItem.id, (oldItem) => newItem);
+      }
+    }
+
+    emit(ItemListState(items: items, title: title));
+  }
+
   Future<void> togglePickedUp(String id) async {
     emit(
       ItemListState(

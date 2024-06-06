@@ -41,6 +41,12 @@ class ItemListView extends StatelessWidget {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.settings_backup_restore),
+                onPressed: () => cubit.resetListPrices(listId: listId),
+              ),
+            ],
           ),
           body: body,
           floatingActionButton: FloatingActionButton(

@@ -84,7 +84,8 @@ class ItemListItem extends Codable {
         unitType: unitType ?? this.unitType,
         attentionPoints: attentionPoints ?? this.attentionPoints,
         pickedUp: pickedUp ?? this.pickedUp,
-        currentUnitPrice: currentUnitPrice ?? this.currentUnitPrice,
+        currentUnitPrice: (currentUnitPrice == 0 ? null : currentUnitPrice) ??
+            (currentUnitPrice != 0 ? this.currentUnitPrice : null),
         fixedPrice: fixedPrice ?? this.fixedPrice,
       );
 
