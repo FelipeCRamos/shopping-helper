@@ -1,10 +1,8 @@
 import 'package:shopping_helper/core/utils/codable.dart';
-// import 'package:uuid/v4.dart';
 
 import 'unit_type.model.dart';
 
-class ItemListItem with Codable<ItemListItem> {
-  // final String id;
+class ItemListItem extends Codable {
   final String title;
   final double quantity;
   final UnitType unitType;
@@ -39,7 +37,7 @@ class ItemListItem with Codable<ItemListItem> {
       : '$quantityAsString ${unitType.asString}';
 
   ItemListItem({
-    // String? id,
+    super.id,
     required this.title,
     this.quantity = 1,
     this.unitType = UnitType.unit,
@@ -47,21 +45,25 @@ class ItemListItem with Codable<ItemListItem> {
     this.pickedUp = false,
     this.currentUnitPrice,
     this.fixedPrice,
-  }) /*: id = id ?? const UuidV4().generate()*/;
+  });
 
   factory ItemListItem.fromJson(Map<String, dynamic> json) => ItemListItem(
-        // id: json.containsKey('id') ? json['id'] : null,
+        id: json.containsKey('id') ? json['id'] : null,
         title: json.containsKey('title') ? json['title'] : null,
         quantity: json.containsKey('quantity') ? json['quantity'] : null,
         unitType: UnitType.fromName(json['unitType']),
-        attentionPoints: json.containsKey('attentionPoints') ? json['attentionPoints'] : null,
+        attentionPoints: json.containsKey('attentionPoints')
+            ? json['attentionPoints']
+            : null,
         pickedUp: json.containsKey('pickedUp') ? json['pickedUp'] : null,
-        currentUnitPrice: json.containsKey('currentUnitPrice') ? json['currentUnitPrice'] : null,
+        currentUnitPrice: json.containsKey('currentUnitPrice')
+            ? json['currentUnitPrice']
+            : null,
         fixedPrice: json.containsKey('fixedPrice') ? json['fixedPrice'] : null,
       );
 
   ItemListItem copyWith({
-    // String? id,
+    String? id,
     String? title,
     double? quantity,
     UnitType? unitType,
@@ -71,7 +73,7 @@ class ItemListItem with Codable<ItemListItem> {
     bool? fixedPrice,
   }) =>
       ItemListItem(
-        // id: id ?? this.id,
+        id: id ?? this.id,
         title: title ?? this.title,
         quantity: quantity ?? this.quantity,
         unitType: unitType ?? this.unitType,
@@ -83,15 +85,16 @@ class ItemListItem with Codable<ItemListItem> {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      // 'id': id,
-      'title': title,
-      'quantity': quantity,
-      'unitType': unitType.toJson,
-      'attentionPoints': attentionPoints,
-      'pickedUp': pickedUp,
-      'currentUnitPrice': currentUnitPrice,
-      'fixedPrice': fixedPrice,
-    };
+    return super.toJson()..addAll(
+      {
+        'title': title,
+        'quantity': quantity,
+        'unitType': unitType.toJson,
+        'attentionPoints': attentionPoints,
+        'pickedUp': pickedUp,
+        'currentUnitPrice': currentUnitPrice,
+        'fixedPrice': fixedPrice,
+      },
+    );
   }
 }

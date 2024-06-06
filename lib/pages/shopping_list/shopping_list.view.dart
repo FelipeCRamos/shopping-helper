@@ -39,7 +39,7 @@ class ShoppingListView extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: Icon(state.editModeEnabled ? Icons.edit_off : Icons.edit),
+                icon: Icon(state.isEditing ? Icons.edit_off : Icons.edit),
                 onPressed: bloc.toggleEditMode,
               ),
               IconButton(

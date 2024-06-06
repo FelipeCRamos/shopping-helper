@@ -23,7 +23,7 @@ class ShoppingListContent extends StatelessWidget {
               (listItem) => ShoppingListItem(
                 id: listItem.id,
                 title: listItem.title,
-                editMode: state.editModeEnabled,
+                editMode: state.isEditing,
                 onTap: () {
                   debugPrint('Performing navigation to "${listItem.title}" list...');
                   context.go(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_helper/core/router.dart';
+import 'package:shopping_helper/modules/in_device_sync/localdb.provider.dart';
 import 'package:shopping_helper/modules/in_device_sync/localdb.repository.dart';
 
 class MyApp extends StatelessWidget {
