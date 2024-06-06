@@ -2,7 +2,6 @@ import 'package:intl/intl.dart';
 
 extension DoubleParser on String {
   double fromMoneyToDouble() {
-    // final parsedDouble = NumberFormat().parse(this);
     String cleanedString;
 
     if((!contains('.') && split(',').length <= 2) || !(contains('.') || contains(','))) {

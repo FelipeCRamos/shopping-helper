@@ -65,8 +65,9 @@ class LocalDatabaseRepository {
 
   Future<List<RecordSnapshot<String, Map<String, Object?>>>> readStore({
     required LocalDatabaseStore store,
+    Finder? finder,
   }) async {
-    final records = await getStore(store.name).find(db);
+    final records = await getStore(store.name).find(db, finder: finder);
     for (final record in records) {
       debugPrint('Record found: ${record.key}');
     }

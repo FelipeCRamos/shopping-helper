@@ -48,19 +48,23 @@ class ShoppingListView extends StatelessWidget {
               )
             ],
           ),
-          floatingActionButton: Builder(builder: (BuildContext ctx) {
-            return FloatingActionButton.extended(
-              label: const Text('Nova lista'),
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                debugPrint('Performing add list navigation');
-                Scaffold.of(ctx).showBottomSheet(
-                  const AddListView().build,
-                  backgroundColor: Theme.of(ctx).colorScheme.onPrimary,
-                );
-              },
-            );
-          }),
+          floatingActionButton: Builder(
+            builder: (BuildContext ctx) {
+              return FloatingActionButton.extended(
+                label: const Text('Nova lista'),
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  debugPrint('Performing add list navigation');
+                  showModalBottomSheet(
+                    context: ctx,
+                    builder: (BuildContext context) => AddListView(
+                      onSubmit: ctx.read<ShoppingListCubit>().addList,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
           body: body,
         );
       },

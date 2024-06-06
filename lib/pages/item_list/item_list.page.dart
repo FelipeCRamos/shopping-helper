@@ -17,11 +17,13 @@ class ItemListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (BuildContext context) => ItemListCubit(title: title)
-        ..loadItems(
+      create: (BuildContext context) => ItemListCubit(
+        title: title,
+        repository: context.read(),
+      )..loadItems(
           listId: listId,
         ),
-      child: const ItemListView(),
+      child: ItemListView(listId: listId),
     );
   }
 }

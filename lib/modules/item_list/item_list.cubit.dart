@@ -1,14 +1,20 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shopping_helper/core/extensions/list.extension.dart';
+import 'package:shopping_helper/modules/in_device_sync/localdb.repository.dart';
+import 'package:shopping_helper/modules/item_list/item_list.repository.dart';
 
 import 'item_list.state.dart';
 import 'models/item_list_item.model.dart';
-import 'models/unit_type.model.dart';
 
 class ItemListCubit extends Cubit<ItemListState> {
-  ItemListCubit({required this.title}) : super(const ItemListState());
+  ItemListCubit({
+    required this.title,
+    required LocalDatabaseRepository repository,
+  })  : _repository = repository,
+        super(const ItemListState());
 
+  final LocalDatabaseRepository _repository;
   final String title;
   List<ItemListItem>? items;
 
@@ -17,33 +23,11 @@ class ItemListCubit extends Cubit<ItemListState> {
   }) async {
     emit(const ItemListState(isLoading: true));
 
-    // ... processes ... //
-
-    items = [
-      ItemListItem(title: 'Abacaxi'),
-      ItemListItem(title: 'Atum'),
-      ItemListItem(title: 'Banana', unitType: UnitType.kilograms, quantity: 1),
-      ItemListItem(
-        title: 'Bicarbonato de Sódio',
-        unitType: UnitType.grams,
-        quantity: 200,
-      ),
-      ItemListItem(title: 'Guaraná Latinha 270ml', quantity: 4),
-      ItemListItem(title: 'Sprite', quantity: 2, unitType: UnitType.liter),
-      ItemListItem(title: 'Agua de Coco', unitType: UnitType.liter, quantity: 2)
-    ];
+    {
+      items = await _repository.getItemsFromList(listId);
+    }
 
     emit(ItemListState(isLoading: false, items: items, title: title));
-  }
-
-  void toggleEditMode() {
-    emit(
-      ItemListState(
-        items: items,
-        title: title,
-        editModeEnabled: !state.editModeEnabled,
-      ),
-    );
   }
 
   Future<void> togglePickedUp(String id) async {
@@ -52,40 +36,52 @@ class ItemListCubit extends Cubit<ItemListState> {
         isLoading: true,
         title: title,
         items: items,
-        editModeEnabled: state.editModeEnabled,
       ),
     );
-    items?.replaceWhere(
-      predicate: (item) => item.id == id,
-      createObject: (item) => item.copyWith(pickedUp: !item.pickedUp),
-    );
+    {
+      ItemListItem? newItem;
+      items?.replaceWhere(
+        predicate: (item) => item.id == id,
+        createObject: (item) {
+          newItem = item.copyWith(pickedUp: !item.pickedUp);
+          return newItem!;
+        },
+      );
+      if (newItem != null) {
+        // updates the item, can be optimized later
+        await _repository.removeItem(newItem!.id);
+        await _repository.saveItem(newItem!);
+      }
+    }
+
     emit(
       ItemListState(
         isLoading: false,
         title: title,
         items: items,
-        editModeEnabled: state.editModeEnabled,
       ),
     );
   }
 
   Future<void> removeFromList(String id) async {
-    final editModeEnabled = state.editModeEnabled;
     emit(
       ItemListState(
         isLoading: true,
         title: title,
         items: items,
-        editModeEnabled: editModeEnabled,
       ),
     );
-    items?.removeWhere((item) => item.id == id);
+
+    {
+      items?.removeWhere((item) => item.id == id);
+      await _repository.removeItem(id);
+    }
+
     emit(
       ItemListState(
         isLoading: false,
         items: items,
         title: title,
-        editModeEnabled: editModeEnabled,
       ),
     );
   }
@@ -99,30 +95,36 @@ class ItemListCubit extends Cubit<ItemListState> {
         isLoading: true,
         items: items,
         title: title,
-        editModeEnabled: state.editModeEnabled,
       ),
     );
 
-    items?.replaceWhere(
-      predicate: (item) => item.id == id,
-      createObject: (oldItem) {
-        final newItem = change(oldItem);
-        if (_validateItem(newItem)) {
-          debugPrint('Changing to new item:\n-> ${newItem.prettyPrint}');
-          return change(newItem);
-        } else {
-          debugPrint('New item not validated, reverting changes!');
-          return oldItem;
-        }
-      },
-    );
+    {
+      ItemListItem? newItem;
+      items?.replaceWhere(
+        predicate: (item) => item.id == id,
+        createObject: (oldItem) {
+          newItem = change(oldItem);
+          if (_validateItem(newItem!)) {
+            debugPrint('Changing to new item:\n-> ${newItem?.prettyPrint}');
+            return change(newItem!);
+          } else {
+            debugPrint('New item not validated, reverting changes!');
+            newItem = null;
+            return oldItem;
+          }
+        },
+      );
+      if (newItem != null) {
+        await _repository.removeItem(newItem!.id);
+        await _repository.saveItem(newItem!);
+      }
+    }
 
     emit(
       ItemListState(
         isLoading: false,
         items: items,
         title: title,
-        editModeEnabled: state.editModeEnabled,
       ),
     );
   }
@@ -134,11 +136,16 @@ class ItemListCubit extends Cubit<ItemListState> {
 
   Future<void> addItem(ItemListItem item) async {
     emit(ItemListState(isLoading: true, items: items, title: title));
-    if(_validateItem(item)) {
-      items?.add(item);
-    } else {
-      throw Exception('Item is not valid');
+
+    {
+      if (_validateItem(item)) {
+        items?.add(item);
+        await _repository.saveItem(item);
+      } else {
+        throw Exception('Item is not valid');
+      }
     }
+
     emit(ItemListState(isLoading: false, items: items, title: title));
   }
 }

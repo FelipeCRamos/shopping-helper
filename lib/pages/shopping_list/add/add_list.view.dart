@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopping_helper/modules/shopping_list/shopping_list.cubit.dart';
 
 class AddListView extends StatelessWidget {
-  const AddListView({super.key});
+  const AddListView({super.key, this.onSubmit});
+
+  final void Function(String)? onSubmit;
 
   @override
   Widget build(BuildContext context) {
+    final viewInsets = MediaQuery.of(context).viewInsets;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+      padding: EdgeInsets.fromLTRB(24, 24, 24, viewInsets.bottom + 24),
       child: SafeArea(
         child: TextFormField(
           autofocus: true,
@@ -18,13 +20,13 @@ class AddListView extends StatelessWidget {
           onTapOutside: (_) {
             Navigator.of(context).pop();
           },
+          decoration: const InputDecoration(
+            labelText: 'Nome da nova lista',
+            hintText: 'Compras do final de semana',
+          ),
           onFieldSubmitted: (String listName) {
-            debugPrint('Nome da nova lista a ser criada: $listName');
-            context.read<ShoppingListCubit>().addList(listName).then(
-              (_) {
-                Navigator.of(context).pop();
-              },
-            );
+            onSubmit?.call(listName);
+            Navigator.of(context).pop();
           },
         ),
       ),

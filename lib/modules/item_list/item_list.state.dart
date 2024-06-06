@@ -3,7 +3,6 @@ import 'package:shopping_helper/modules/item_list/models/item_list_item.model.da
 class ItemListState {
   // flags
   final bool isLoading;
-  final bool editModeEnabled;
 
   // data
   final String? title;
@@ -29,7 +28,6 @@ class ItemListState {
 
   const ItemListState({
     this.isLoading = false,
-    this.editModeEnabled = false,
     this.title,
     this.items,
   });

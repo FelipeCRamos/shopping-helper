@@ -3,6 +3,7 @@ import 'package:shopping_helper/core/utils/codable.dart';
 import 'unit_type.model.dart';
 
 class ItemListItem extends Codable {
+  final String parentShoppingListId;
   final String title;
   final double quantity;
   final UnitType unitType;
@@ -38,6 +39,7 @@ class ItemListItem extends Codable {
 
   ItemListItem({
     super.id,
+    required this.parentShoppingListId,
     required this.title,
     this.quantity = 1,
     this.unitType = UnitType.unit,
@@ -48,8 +50,9 @@ class ItemListItem extends Codable {
   });
 
   factory ItemListItem.fromJson(Map<String, dynamic> json) => ItemListItem(
-        id: json.containsKey('id') ? json['id'] : null,
-        title: json.containsKey('title') ? json['title'] : null,
+        id: json['id'],
+        parentShoppingListId: json['parentShoppingListId'],
+        title: json['title'],
         quantity: json.containsKey('quantity') ? json['quantity'] : null,
         unitType: UnitType.fromName(json['unitType']),
         attentionPoints: json.containsKey('attentionPoints')
@@ -64,6 +67,7 @@ class ItemListItem extends Codable {
 
   ItemListItem copyWith({
     String? id,
+    String? parentShoppingListId,
     String? title,
     double? quantity,
     UnitType? unitType,
@@ -74,6 +78,7 @@ class ItemListItem extends Codable {
   }) =>
       ItemListItem(
         id: id ?? this.id,
+        parentShoppingListId: parentShoppingListId ?? this.parentShoppingListId,
         title: title ?? this.title,
         quantity: quantity ?? this.quantity,
         unitType: unitType ?? this.unitType,
@@ -85,16 +90,18 @@ class ItemListItem extends Codable {
 
   @override
   Map<String, dynamic> toJson() {
-    return super.toJson()..addAll(
-      {
-        'title': title,
-        'quantity': quantity,
-        'unitType': unitType.toJson,
-        'attentionPoints': attentionPoints,
-        'pickedUp': pickedUp,
-        'currentUnitPrice': currentUnitPrice,
-        'fixedPrice': fixedPrice,
-      },
-    );
+    return super.toJson()
+      ..addAll(
+        {
+          'parentShoppingListId': parentShoppingListId,
+          'title': title,
+          'quantity': quantity,
+          'unitType': unitType.toJson,
+          'attentionPoints': attentionPoints,
+          'pickedUp': pickedUp,
+          'currentUnitPrice': currentUnitPrice,
+          'fixedPrice': fixedPrice,
+        },
+      );
   }
 }
